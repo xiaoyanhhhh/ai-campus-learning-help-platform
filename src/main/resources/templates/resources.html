@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>课程资源</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <h1>课程资源与知识库</h1>
+    <div class="flash" th:if="${message}" th:text="${message}"></div>
+    <section class="panel">
+        <form th:action="@{/resources}" method="get" class="form-row">
+            <div><label>关键词</label><input name="keyword" th:value="${keyword}" placeholder="按标题、简介或章节搜索"></div>
+            <div>
+                <label>课程</label>
+                <select name="courseId">
+                    <option value="">全部课程</option>
+                    <option th:each="c:${courses}" th:value="${c.id}" th:selected="${selectedCourseId != null && selectedCourseId == c.id}" th:text="${c.name}"></option>
+                </select>
+            </div>
+            <div>
+                <label>类型</label>
+                <select name="type">
+                    <option value="">全部类型</option>
+                    <option value="课件" th:selected="${selectedType == '课件'}">课件</option>
+                    <option value="代码示例" th:selected="${selectedType == '代码示例'}">代码示例</option>
+                    <option value="实验说明" th:selected="${selectedType == '实验说明'}">实验说明</option>
+                    <option value="学习笔记" th:selected="${selectedType == '学习笔记'}">学习笔记</option>
+                    <option value="常见问题" th:selected="${selectedType == '常见问题'}">常见问题</option>
+                </select>
+            </div>
+            <div>
+                <label>标签</label>
+                <select name="tag">
+                    <option value="">全部标签</option>
+                    <option th:each="t:${tags}" th:value="${t}" th:selected="${selectedTag == t}" th:text="${t}"></option>
+                </select>
+            </div>
+            <div>
+                <label>排序</label>
+                <select name="sort">
+                    <option value="new" th:selected="${sort == 'new'}">最新发布</option>
+                    <option value="views" th:selected="${sort == 'views'}">浏览量优先</option>
+                    <option value="rating" th:selected="${sort == 'rating'}">评分优先</option>
+                </select>
+            </div>
+            <button type="submit">搜索</button>
+        </form>
+    </section>
+    <section class="grid">
+        <article class="card" th:each="r:${resources}">
+            <h2><a th:href="@{'/resources/' + ${r.id}}" th:text="${r.title}"></a></h2>
+            <p><span class="tag" th:text="${r.type}"></span><span class="tag" th:text="${r.courseName}"></span><span class="status APPROVED">已公开</span></p>
+            <p class="muted" th:if="${r.tagNames}" th:text="'标签：' + ${r.tagNames}"></p>
+            <p th:text="${r.description}"></p>
+            <p class="muted" th:text="'章节：' + ${r.chapter} + ' / 上传人：' + ${r.uploaderName} + ' / 浏览：' + ${r.viewCount}"></p>
+        </article>
+    </section>
+    <section class="panel pager">
+        <a class="btn secondary" th:if="${page > 1}" th:href="@{/resources(keyword=${keyword}, courseId=${selectedCourseId}, type=${selectedType}, tag=${selectedTag}, sort=${sort}, page=${page - 1})}">上一页</a>
+        <span th:text="'第 ' + ${page} + ' / ' + ${totalPages} + ' 页'"></span>
+        <a class="btn secondary" th:if="${page < totalPages}" th:href="@{/resources(keyword=${keyword}, courseId=${selectedCourseId}, type=${selectedType}, tag=${selectedTag}, sort=${sort}, page=${page + 1})}">下一页</a>
+    </section>
+    <section class="panel">
+        <h2>上传资源</h2>
+        <form th:action="@{/resources}" method="post" enctype="multipart/form-data">
+            <div class="form-row">
+                <div><label>标题</label><input name="title" required></div>
+                <div><label>类型</label><select name="type"><option>课件</option><option>代码示例</option><option>实验说明</option><option>学习笔记</option><option>常见问题</option></select></div>
+                <div><label>课程</label><select name="courseId"><option th:each="c:${courses}" th:value="${c.id}" th:text="${c.name}"></option></select></div>
+                <div><label>章节</label><input name="chapter"></div>
+                <div><label>标签</label><input name="tags" placeholder="例如 Spring Security RBAC"></div>
+            </div>
+            <label>简介</label><textarea name="description"></textarea>
+            <label>附件</label><input type="file" name="file">
+            <div class="actions"><button type="submit">提交资源</button></div>
+        </form>
+    </section>
+    <section class="panel" th:if="${user.roles.contains('ADMIN') || user.roles.contains('TEACHER')}">
+        <h2>待审核资源</h2>
+        <table><tr><th>标题</th><th>上传人</th><th>操作</th></tr>
+            <tr th:each="r:${pending}">
+                <td th:text="${r.title}"></td><td th:text="${r.uploaderName}"></td>
+                <td class="actions">
+                    <form th:action="@{'/resources/audit/' + ${r.id}}" method="post"><input type="hidden" name="status" value="APPROVED"><button>通过</button></form>
+                    <form th:action="@{'/resources/audit/' + ${r.id}}" method="post"><input type="hidden" name="status" value="REJECTED"><button class="danger">驳回</button></form>
+                </td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

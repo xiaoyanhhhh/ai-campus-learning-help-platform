@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>工作台 - 知汇校园</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="app-main">
+    <section class="page-heading">
+        <div>
+            <h1 th:text="'下午好，' + ${user.realName}"></h1>
+            <p>坚持学习，乐于互助，让知识在校园里流动起来。</p>
+        </div>
+        <div class="heading-actions">
+            <a class="btn secondary" th:href="@{/resources}">浏览资源</a>
+            <a class="btn" th:href="@{/helps}">发布求助</a>
+        </div>
+    </section>
+
+    <section class="metric-grid">
+        <article class="metric">
+            <span class="metric-icon blue">★</span>
+            <div><small>我的积分</small><strong th:text="${user.points}"></strong><em>互助贡献持续积累</em></div>
+        </article>
+        <article class="metric">
+            <span class="metric-icon green">▮</span>
+            <div><small>热门学习资源</small><strong th:text="${resourceCount}"></strong><em>精选已审核内容</em></div>
+        </article>
+        <article class="metric">
+            <span class="metric-icon amber">●</span>
+            <div><small>待认领求助</small><strong th:text="${openHelpCount}"></strong><em>等待同学伸出援手</em></div>
+        </article>
+        <article class="metric">
+            <span class="metric-icon violet">AI</span>
+            <div><small>AI 调用次数</small><strong th:text="${aiCallCount}"></strong><em>推荐、摘要与审核</em></div>
+        </article>
+    </section>
+
+    <section class="dashboard-row">
+        <article class="panel activity-panel">
+            <div class="section-title"><div><h2>学习活跃趋势</h2><p>最近 7 天的平台学习行为</p></div><span class="tag">近 7 天</span></div>
+            <div class="chart">
+                <div class="chart-grid"><i></i><i></i><i></i><i></i></div>
+                <svg viewBox="0 0 700 210" preserveAspectRatio="none" aria-label="学习活跃趋势图">
+                    <path class="area" d="M0 164 L110 92 L220 148 L330 112 L440 151 L560 64 L700 84 L700 210 L0 210 Z"/>
+                    <polyline points="0,164 110,92 220,148 330,112 440,151 560,64 700,84"/>
+                    <g><circle cx="0" cy="164" r="5"/><circle cx="110" cy="92" r="5"/><circle cx="220" cy="148" r="5"/><circle cx="330" cy="112" r="5"/><circle cx="440" cy="151" r="5"/><circle cx="560" cy="64" r="5"/><circle cx="700" cy="84" r="5"/></g>
+                </svg>
+                <div class="chart-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>今天</span></div>
+            </div>
+        </article>
+        <article class="panel ranking-panel">
+            <div class="section-title"><div><h2>积分排行榜</h2><p>本月互助贡献</p></div></div>
+            <ol class="ranking">
+                <li th:each="row,stat:${rank}">
+                    <span class="rank-number" th:text="${stat.count}"></span>
+                    <span class="rank-avatar" th:text="${#strings.substring(row.name,0,1)}"></span>
+                    <strong th:text="${row.name}"></strong>
+                    <em th:text="${row.points} + ' 分'"></em>
+                </li>
+            </ol>
+        </article>
+    </section>
+
+    <section class="dashboard-row lower">
+        <article class="panel resource-panel">
+            <div class="section-title"><div><h2>热门课程资源</h2><p>根据浏览热度与审核质量排序</p></div><a th:href="@{/resources}">查看全部</a></div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>资源名称</th><th>课程</th><th>类型</th><th>上传人</th><th>浏览量</th></tr></thead>
+                    <tbody>
+                    <tr th:each="r:${hotResources}">
+                        <td><a th:href="@{'/resources/' + ${r.id}}" th:text="${r.title}"></a></td>
+                        <td th:text="${r.courseName}"></td>
+                        <td><span class="status APPROVED" th:text="${r.type}"></span></td>
+                        <td th:text="${r.uploaderName}"></td>
+                        <td th:text="${r.viewCount}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+        <article class="panel help-panel">
+            <div class="section-title"><div><h2>最新求助</h2><p>发现可以帮助的问题</p></div><a th:href="@{/helps}">查看全部</a></div>
+            <div class="help-list">
+                <a th:each="h:${helps}" th:href="@{'/helps/' + ${h.id}}">
+                    <span th:class="'status ' + ${h.status}" th:text="${h.status == 'OPEN' ? '开放中' : h.status}"></span>
+                    <strong th:text="${h.title}"></strong>
+                    <small th:text="${h.courseName} + ' · ' + ${h.bountyPoints} + ' 积分'"></small>
+                </a>
+            </div>
+        </article>
+    </section>
+</main>
+</body>
+</html>

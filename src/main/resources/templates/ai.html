@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>AI助手</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <h1>AI辅助学习功能</h1>
+    <section class="grid">
+        <div class="card">
+            <h2>智能推荐</h2>
+            <form th:action="@{/ai/recommend}" method="post">
+                <label>学习标签或当前困惑</label><textarea name="tags" required>Spring Security RBAC 事务</textarea>
+                <button>生成推荐</button>
+            </form>
+            <p class="result" th:if="${recommendResult}" th:text="${recommendResult}"></p>
+        </div>
+        <div class="card">
+            <h2>资源摘要</h2>
+            <form th:action="@{/ai/summary}" method="post">
+                <label>标题</label><input name="title" value="事务与积分结算案例">
+                <label>内容</label><textarea name="content" required>通过 Spring 事务保证发布者扣分和帮助者加分同时成功或失败。</textarea>
+                <button>生成摘要</button>
+            </form>
+            <p class="result" th:if="${summaryResult}" th:text="${summaryResult}"></p>
+        </div>
+        <div class="card">
+            <h2>内容审核</h2>
+            <form th:action="@{/ai/audit}" method="post">
+                <label>待审核文本</label><textarea name="content" required>请帮我解释 MyBatis Mapper 注解用法。</textarea>
+                <button>审核内容</button>
+            </form>
+            <p class="result" th:if="${auditResult}" th:text="${auditResult}"></p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

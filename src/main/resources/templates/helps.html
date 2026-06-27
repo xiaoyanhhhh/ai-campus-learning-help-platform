@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>学习求助</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <h1>学习求助与互助预约</h1>
+    <section class="grid">
+        <article class="card" th:each="h:${helps}">
+            <h2><a th:href="@{'/helps/' + ${h.id}}" th:text="${h.title}"></a></h2>
+            <p><span th:class="'status ' + ${h.status}" th:text="${h.status}"></span><span class="tag" th:text="${h.courseName}"></span><span class="tag" th:text="${h.tags}"></span></p>
+            <p th:text="${h.description}"></p>
+            <p class="muted" th:text="'发布：' + ${h.publisherName} + ' / 悬赏：' + ${h.bountyPoints} + ' 分'"></p>
+        </article>
+    </section>
+    <section class="panel">
+        <h2>发布求助</h2>
+        <form th:action="@{/helps}" method="post">
+            <div class="form-row">
+                <div><label>标题</label><input name="title" required></div>
+                <div><label>课程</label><select name="courseId"><option th:each="c:${courses}" th:value="${c.id}" th:text="${c.name}"></option></select></div>
+                <div><label>知识点标签</label><input name="tags" placeholder="Spring,事务,RBAC"></div>
+                <div><label>悬赏积分</label><input type="number" name="bountyPoints" value="10" min="0"></div>
+                <div><label>期望截止</label><input type="datetime-local" name="deadline"></div>
+            </div>
+            <label>问题描述</label><textarea name="description" required></textarea>
+            <div class="actions"><button type="submit">发布求助</button></div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

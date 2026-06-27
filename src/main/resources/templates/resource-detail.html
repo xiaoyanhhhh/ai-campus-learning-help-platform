@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>资源详情</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <article class="panel">
+        <h1 th:text="${resource.title}"></h1>
+        <p><span class="tag" th:text="${resource.type}"></span><span class="tag" th:text="${resource.courseName}"></span><span th:class="'status ' + ${resource.auditStatus}" th:text="${resource.auditStatus}"></span></p>
+        <p th:text="${resource.description}"></p>
+        <p class="muted" th:text="'章节：' + ${resource.chapter} + ' / 上传人：' + ${resource.uploaderName} + ' / 浏览：' + ${resource.viewCount}"></p>
+        <p th:if="${resource.filePath}"><a class="btn" th:href="@{${resource.filePath}}" target="_blank">查看附件</a></p>
+        <form th:action="@{'/resources/' + ${resource.id} + '/favorite'}" method="post"><button type="submit">收藏资源</button></form>
+    </article>
+</main>
+</body>
+</html>

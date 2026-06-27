@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>个人中心</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <h1>积分与个人中心</h1>
+    <div class="flash" th:if="${message}" th:text="${message}"></div>
+    <section class="panel">
+        <h2 th:text="${user.realName}"></h2>
+        <p>账号：<span th:text="${user.username}"></span> / 学号工号：<span th:text="${user.studentNo}"></span> / 积分：<strong th:text="${user.points}"></strong></p>
+        <p>角色：<span th:each="role:${user.roles}" class="tag" th:text="${role}"></span></p>
+    </section>
+    <section class="panel">
+        <h2>维护个人资料</h2>
+        <form th:action="@{/profile}" method="post">
+            <div class="form-row">
+                <div><label>姓名</label><input name="realName" th:value="${user.realName}" required></div>
+                <div><label>学号/工号</label><input name="studentNo" th:value="${user.studentNo}"></div>
+                <div><label>邮箱</label><input type="email" name="email" th:value="${user.email}"></div>
+            </div>
+            <div class="actions"><button type="submit">保存资料</button></div>
+        </form>
+    </section>
+    <section class="panel">
+        <h2>积分明细</h2>
+        <table><tr><th>时间</th><th>来源</th><th>变动</th><th>说明</th></tr>
+            <tr th:each="r:${records}"><td th:text="${r.createdAt}"></td><td th:text="${r.source}"></td><td th:text="${r.changeValue}"></td><td th:text="${r.remark}"></td></tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

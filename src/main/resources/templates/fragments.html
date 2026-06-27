@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="topbar">
+    <aside class="sidebar">
+        <a class="sidebar-brand" th:href="@{/}">
+            <span class="brand-mark">知</span>
+            <span><strong>知汇校园</strong><small>AI 学习互助平台</small></span>
+        </a>
+        <nav class="side-nav">
+            <a th:href="@{/}"><span class="nav-icon">⌂</span><span>工作台</span></a>
+            <a th:href="@{/resources}"><span class="nav-icon">▤</span><span>课程资源</span></a>
+            <a th:href="@{/helps}"><span class="nav-icon">◌</span><span>学习求助</span></a>
+            <a th:href="@{/ai}"><span class="nav-icon">✦</span><span>AI 学习助手</span></a>
+            <a th:href="@{/profile}"><span class="nav-icon">◎</span><span>积分记录</span></a>
+            <a th:href="@{/admin}"><span class="nav-icon">⚙</span><span>系统管理</span></a>
+        </nav>
+        <div class="sidebar-foot">
+            <span class="online-dot"></span>
+            <span>系统运行正常</span>
+        </div>
+    </aside>
+    <header class="topbar">
+        <div class="top-search">
+            <span>⌕</span>
+            <input type="search" placeholder="搜索课程、资源、求助">
+        </div>
+        <div class="top-actions">
+            <a class="icon-button" th:href="@{/helps}" title="待处理消息">♢</a>
+            <a class="user-chip" th:href="@{/profile}">
+                <span class="avatar">学</span>
+                <span><strong>个人中心</strong><small>查看积分与记录</small></span>
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <button class="logout-button" type="submit" title="退出登录">退出</button>
+            </form>
+        </div>
+    </header>
+</div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+-- 数据库建表脚本与 src/main/resources/schema.sql 保持一致。
+-- 本项目默认使用 H2 文件库；部署 MySQL 时可按字段类型平移。
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(100) NOT NULL,
+  real_name VARCHAR(50) NOT NULL,
+  student_no VARCHAR(50),
+  email VARCHAR(100),
+  status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+  points INT NOT NULL DEFAULT 100,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS role (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(30) NOT NULL UNIQUE,
+  name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS user_role (
+  user_id BIGINT NOT NULL,
+  role_id BIGINT NOT NULL,
+  PRIMARY KEY (user_id, role_id)
+);
+
+CREATE TABLE IF NOT EXISTS course (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description VARCHAR(500),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tag (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS resource (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  type VARCHAR(40) NOT NULL,
+  chapter VARCHAR(80),
+  description VARCHAR(1000),
+  file_path VARCHAR(255),
+  course_id BIGINT NOT NULL,
+  uploader_id BIGINT NOT NULL,
+  audit_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  view_count INT NOT NULL DEFAULT 0,
+  rating DOUBLE NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_resource_status_course ON resource(audit_status, course_id);
+CREATE INDEX IF NOT EXISTS idx_resource_title ON resource(title);
+
+CREATE TABLE IF NOT EXISTS resource_tag (
+  resource_id BIGINT NOT NULL,
+  tag_id BIGINT NOT NULL,
+  PRIMARY KEY (resource_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS favorite (
+  user_id BIGINT NOT NULL,
+  resource_id BIGINT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, resource_id)
+);
+
+CREATE TABLE IF NOT EXISTS help_request (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  description VARCHAR(2000) NOT NULL,
+  course_id BIGINT NOT NULL,
+  tags VARCHAR(200),
+  publisher_id BIGINT NOT NULL,
+  helper_id BIGINT,
+  status VARCHAR(30) NOT NULL DEFAULT 'OPEN',
+  bounty_points INT NOT NULL DEFAULT 0,
+  deadline TIMESTAMP,
+  solution TEXT,
+  evaluation VARCHAR(500),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  claimed_at TIMESTAMP,
+  submitted_at TIMESTAMP,
+  completed_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_help_status ON help_request(status);
+
+CREATE TABLE IF NOT EXISTS help_comment (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  help_id BIGINT NOT NULL,
+  user_id BIGINT NOT NULL,
+  content VARCHAR(1000) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_help_comment_help ON help_comment(help_id, created_at);
+
+CREATE TABLE IF NOT EXISTS point_record (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  change_value INT NOT NULL,
+  source VARCHAR(50) NOT NULL,
+  biz_id BIGINT,
+  remark VARCHAR(300),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ai_call_log (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  feature VARCHAR(50) NOT NULL,
+  user_id BIGINT,
+  request_summary VARCHAR(1000),
+  response_summary VARCHAR(1000),
+  elapsed_ms BIGINT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS operation_log (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  operation VARCHAR(100) NOT NULL,
+  username VARCHAR(50),
+  ip VARCHAR(80),
+  method VARCHAR(200),
+  elapsed_ms BIGINT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

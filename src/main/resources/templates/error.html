@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>提示</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<main class="auth card">
+    <h1>操作提示</h1>
+    <p th:text="${message}"></p>
+    <a class="btn" href="javascript:history.back()">返回上一页</a>
+</main>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>审计后台</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <h1>系统管理与审计</h1>
+    <div class="flash" th:if="${message}" th:text="${message}"></div>
+    <section class="panel">
+        <h2>用户与权限管理</h2>
+        <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>账号</th>
+                    <th>姓名</th>
+                    <th>学号/工号</th>
+                    <th>邮箱</th>
+                    <th>状态</th>
+                    <th>角色</th>
+                    <th>积分</th>
+                    <th>操作</th>
+                </tr>
+                <tr th:each="u:${users}">
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.realName}"></td>
+                    <td th:text="${u.studentNo}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td><span th:class="'status ' + ${u.status}" th:text="${u.status}"></span></td>
+                    <td th:text="${#strings.listJoin(u.roles, ', ')}"></td>
+                    <td th:text="${u.points}"></td>
+                    <td class="actions">
+                        <form th:action="@{'/admin/users/' + ${u.id} + '/status'}" method="post">
+                            <select name="status">
+                                <option value="ACTIVE" th:selected="${u.status == 'ACTIVE'}">ACTIVE</option>
+                                <option value="PENDING" th:selected="${u.status == 'PENDING'}">PENDING</option>
+                                <option value="DISABLED" th:selected="${u.status == 'DISABLED'}">DISABLED</option>
+                            </select>
+                            <button type="submit">更新状态</button>
+                        </form>
+                        <form th:action="@{'/admin/users/' + ${u.id} + '/role'}" method="post">
+                            <select name="role">
+                                <option value="STUDENT" th:selected="${u.roles.contains('STUDENT')}">STUDENT</option>
+                                <option value="TEACHER" th:selected="${u.roles.contains('TEACHER')}">TEACHER</option>
+                                <option value="ADMIN" th:selected="${u.roles.contains('ADMIN')}">ADMIN</option>
+                            </select>
+                            <button type="submit" class="secondary">分配角色</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    <section class="panel">
+        <h2>AI调用日志</h2>
+        <table><tr><th>时间</th><th>功能</th><th>请求摘要</th><th>响应摘要</th><th>耗时</th><th>状态</th></tr>
+            <tr th:each="l:${aiLogs}"><td th:text="${l.createdAt}"></td><td th:text="${l.feature}"></td><td th:text="${l.requestSummary}"></td><td th:text="${l.responseSummary}"></td><td th:text="${l.elapsedMs}"></td><td th:text="${l.status}"></td></tr>
+        </table>
+    </section>
+    <section class="panel">
+        <h2>关键操作日志</h2>
+        <table><tr><th>时间</th><th>操作</th><th>用户</th><th>IP</th><th>方法</th><th>耗时</th><th>状态</th></tr>
+            <tr th:each="l:${operationLogs}"><td th:text="${l.createdAt}"></td><td th:text="${l.operation}"></td><td th:text="${l.username}"></td><td th:text="${l.ip}"></td><td th:text="${l.method}"></td><td th:text="${l.elapsedMs}"></td><td th:text="${l.status}"></td></tr>
+        </table>
+    </section>
+    <section class="panel">
+        <h2>近期积分变动</h2>
+        <table><tr><th>时间</th><th>用户</th><th>变动</th><th>来源</th><th>说明</th></tr>
+            <tr th:each="p:${points}"><td th:text="${p.createdAt}"></td><td th:text="${p.realName}"></td><td th:text="${p.changeValue}"></td><td th:text="${p.source}"></td><td th:text="${p.remark}"></td></tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

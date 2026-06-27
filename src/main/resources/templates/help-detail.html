@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>求助详情</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments :: topbar}"></div>
+<main class="wrap">
+    <div class="flash" th:if="${message}" th:text="${message}"></div>
+    <article class="panel">
+        <h1 th:text="${help.title}"></h1>
+        <p><span th:class="'status ' + ${help.status}" th:text="${help.status}"></span><span class="tag" th:text="${help.courseName}"></span><span class="tag" th:text="${help.tags}"></span></p>
+        <p th:text="${help.description}"></p>
+        <p class="muted" th:text="'发布者：' + ${help.publisherName} + ' / 认领者：' + (${help.helperName} ?: '暂无') + ' / 悬赏：' + ${help.bountyPoints}"></p>
+        <p class="muted" th:text="'创建：' + ${help.createdAt} + ' / 认领：' + (${help.claimedAt} ?: '暂无') + ' / 完成：' + (${help.completedAt} ?: '暂无')"></p>
+        <div class="actions">
+            <form th:if="${help.status == 'OPEN' && help.publisherId != user.id}" th:action="@{'/helps/' + ${help.id} + '/claim'}" method="post"><button>认领求助</button></form>
+            <form th:action="@{'/helps/' + ${help.id} + '/ai-answer'}" method="post"><button class="secondary">AI 辅助解答</button></form>
+        </div>
+    </article>
+    <section class="panel" th:if="${aiAnswer}">
+        <h2>AI 辅助解答</h2>
+        <p class="muted">用于帮助长期无人认领或暂时搁置的问题先推进思路，最终仍建议同学结合课程资料复核。</p>
+        <p class="result" th:text="${aiAnswer}"></p>
+    </section>
+    <section class="panel" th:if="${help.status == 'CLAIMED' && help.helperId == user.id}">
+        <h2>提交解答</h2>
+        <form th:action="@{'/helps/' + ${help.id} + '/solution'}" method="post">
+            <textarea name="solution" required></textarea>
+            <div class="actions"><button>提交解答</button></div>
+        </form>
+    </section>
+    <section class="panel" th:if="${help.solution}">
+        <h2>互助解答</h2>
+        <p class="result" th:text="${help.solution}"></p>
+        <form th:if="${help.status == 'WAIT_CONFIRM' && help.publisherId == user.id}" th:action="@{'/helps/' + ${help.id} + '/complete'}" method="post">
+            <label>评价</label><textarea name="evaluation"></textarea>
+            <div class="actions"><button>确认完成并结算积分</button></div>
+        </form>
+        <p th:if="${help.evaluation}" th:text="'评价：' + ${help.evaluation}"></p>
+    </section>
+    <section class="panel">
+        <h2>评论与补充说明</h2>
+        <div class="comment-list" th:if="${!comments.isEmpty()}">
+            <article th:each="c:${comments}" class="comment-item">
+                <strong th:text="${c.userName}"></strong>
+                <span class="muted" th:text="${c.createdAt}"></span>
+                <p th:text="${c.content}"></p>
+            </article>
+        </div>
+        <p class="muted" th:if="${comments.isEmpty()}">暂无补充说明。</p>
+        <form th:action="@{'/helps/' + ${help.id} + '/comments'}" method="post">
+            <label>补充说明</label><textarea name="content" required placeholder="补充问题背景、排查过程或参考资料"></textarea>
+            <div class="actions"><button type="submit">提交说明</button></div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

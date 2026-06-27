@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>登录 - 知汇校园</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="login-page">
+<main class="login-layout">
+    <section class="login-visual">
+        <div class="visual-copy">
+            <div class="login-brand"><span class="brand-mark">知</span><strong>知汇校园</strong></div>
+            <h1>让每一次求助<br>都成为共同成长</h1>
+            <p>汇聚课程资源、同伴互助与 AI 学习能力，连接校园里的知识与热心。</p>
+            <div class="visual-points">
+                <span>课程资源共建</span><span>学习问题互助</span><span>AI 智能推荐</span>
+            </div>
+        </div>
+    </section>
+    <section class="login-form-side">
+        <div class="login-form-wrap">
+            <div class="mobile-brand"><span class="brand-mark">知</span><strong>知汇校园</strong></div>
+            <p class="login-kicker">AI 校园学习互助平台</p>
+            <h2>欢迎回来</h2>
+            <p class="login-lead">登录账号，继续今天的学习与分享。</p>
+            <div class="flash" th:if="${message}" th:text="${message}"></div>
+            <div class="flash flash-error" th:if="${param.error}">账号或密码不正确，请重新输入。</div>
+            <form class="login-form" th:action="@{/login}" method="post">
+                <label for="username">用户名</label>
+                <div class="input-shell"><span>●</span><input id="username" name="username" placeholder="请输入用户名" required autofocus></div>
+                <label for="password">密码</label>
+                <div class="input-shell"><span>◆</span><input id="password" name="password" type="password" placeholder="请输入密码" required></div>
+                <button class="login-submit" type="submit">登录平台</button>
+            </form>
+            <div class="demo-title"><span>演示账号</span><small>密码均为 123456</small></div>
+            <div class="demo-accounts">
+                <button type="button" onclick="fillAccount('admin')"><b>管</b><span>管理员<small>admin</small></span></button>
+                <button type="button" onclick="fillAccount('teacher')"><b>师</b><span>教师<small>teacher</small></span></button>
+                <button type="button" onclick="fillAccount('student')"><b>学</b><span>学生<small>student</small></span></button>
+            </div>
+            <p class="register-link">还没有账号？<a th:href="@{/register}">注册学生账号</a></p>
+        </div>
+    </section>
+</main>
+<script>
+    function fillAccount(username) {
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = '123456';
+        document.getElementById('password').focus();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# Build output
+target/
+*.jar
+*.war
+
+# Local Maven cache used by this coursework project
+.m2/
+
+# Runtime data and logs
+data/
+*.log
+*.err
+*.pid
+logs/
+
+# Generated packages
+dist/
+
+# IDE and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local uploads and secrets
+src/main/resources/static/uploads/
+.env
+*.env
+application-local.yml
+application-prod.yml
+
