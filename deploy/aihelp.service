@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/aihelp
-ExecStart=/usr/bin/java -jar /opt/aihelp/aihelp.jar --server.port=8080
+ExecStart=/usr/bin/java -jar /opt/aihelp/aihelp.jar --server.port=8081 --server.servlet.context-path=/aihelp
 Restart=always
 RestartSec=5
 Environment=AI_MOCK_ENABLED=true
